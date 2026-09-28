@@ -1,0 +1,6 @@
+backend/target/
+backend/uploads/products/*
+!backend/uploads/products/.gitkeep
+frontend/node_modules/
+frontend/dist/
+frontend/.angular/
