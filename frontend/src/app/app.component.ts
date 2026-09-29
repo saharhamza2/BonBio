@@ -132,7 +132,7 @@ export class AppComponent {
     if (file.size > 5 * 1024 * 1024) { this.snack.open('Image trop volumineuse (5 Mo maximum).', 'Fermer', { duration: 3500 }); input.value = ''; return; }
     this.selectedPhoto = file; this.selectedPhotoName = file.name; this.photoPreviewUrl = URL.createObjectURL(file);
   }
-  imageUrl(path?: string) { return path?.startsWith('http') ? path : path ? `http://localhost:8084${path}` : ''; }
+  imageUrl(path?: string) { return path?.startsWith('http') ? path : path ? `https://bonbio-production.up.railway.app${path}` : ''; }
   error(e: any) {
     this.loading = false;
     const message = e?.error?.message || (e?.status === 0
