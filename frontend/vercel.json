@@ -3,6 +3,10 @@
     {
       "source": "/api/:path*",
       "destination": "https://bonbio-production.up.railway.app/api/:path*"
+    },
+    {
+      "source": "/uploads/:path*",
+      "destination": "https://bonbio-production.up.railway.app/uploads/:path*"
     }
   ]
 }
