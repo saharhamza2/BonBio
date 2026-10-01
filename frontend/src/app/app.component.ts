@@ -64,7 +64,7 @@ export class AppComponent {
       return;
     }
     this.orderLines = [];
-    this.form = item ? { ...item, categorieId: item.categorie?.id } : type === 'client' ? { nom: '', telephone: '', adresse: '' } : type === 'categorie' ? { nom: '' } : type === 'produit' ? { nom: '', prix: '', categorieId: '' } : {};
+    this.form = item ? { ...item, categorieId: item.categorie?.id } : type === 'client' ? { nom: '', telephone: '', adresse: '' } : type === 'categorie' ? { nom: '' } : type === 'produit' ? { nom: '', prix: '', categorieId: null } : {};
   }
   cancel() { this.editing = undefined; this.form = {}; this.orderLines = []; this.selectedPhotoName = ''; this.selectedPhoto = null; this.photoPreviewUrl = ''; this.quickClient = false; }
   addOrderLine() { this.orderLines = [...this.orderLines, { quantite: 1 }]; }
@@ -75,7 +75,7 @@ export class AppComponent {
   get orderTotal() { return this.orderLines.reduce((sum, line) => sum + this.lineTotal(line), 0); }
   addQuickClient() {
     if (!this.clientForm.nom?.trim() || !this.clientForm.telephone?.trim()) { this.snack.open('Le nom et le téléphone du client sont obligatoires.', 'Fermer', { duration: 3000 }); return; }
-    this.clientsApi.save(this.clientForm).subscribe({ next: client => { this.clients = [...this.clients, client]; this.form.clientId = client.id; this.quickClient = false; this.clientForm = {}; this.snack.open('Client ajouté avec succès', 'OK', { duration: 2500 }); }, error: e => this.error(e) });
+    this.clientsApi.save(this.clientForm).subscribe({ next: client => { this.clients = [...this.clients, client]; this.form.clientId = client.id; this.quickClient = false; this.clientForm = {}; this.snack.open('Client ajouté avec succès', 'OK', { duration: 2500 }); }, error: (e: any) => this.error(e) });
   }
   save() {
     if (this.saving) return;
@@ -83,7 +83,7 @@ export class AppComponent {
     if (this.view === 'commandes') {
       const lines = this.orderLines.filter(l => l.produitId && this.productFor(l));
       if (!this.form.clientId || !lines.length) { this.snack.open('Choisissez un client et au moins un produit.', 'Fermer', { duration: 3000 }); return; }
-      const payload = { clientId: Number(this.form.clientId), statut: this.form.statut || 'EN_ATTENTE', dateLivraison: this.dateTimeValue(this.form.dateLivraison), lignes: lines.map(l => ({ produitId: Number(l.produitId), quantite: Number(l.quantite) })) };
+      const payload = { clientId: Number(this.form.clientId), statut: this.form.statut || 'EN_ATTENTE', dateLivraison: this.dateTimeValue(this.form.dateLivraison), lignes: lines.map(l => ({ produitId: l.produitId, quantite: l.quantite })) };
       call = this.ordersApi.save(payload, this.editing);
     } else if (this.view === 'produits') {
       if (!this.form.nom?.trim() || !Number.isFinite(Number(this.form.prix)) || Number(this.form.prix) < 0 || !this.form.categorieId) { this.snack.open('Vérifiez le nom, le prix et la catégorie du produit.', 'Fermer', { duration: 3000 }); return; }
@@ -92,7 +92,7 @@ export class AppComponent {
     else if (this.view === 'clients') call = this.clientsApi.save(this.form, this.editing);
     if (!call) return;
     this.saving = true;
-    call.subscribe({ next: () => { this.saving = false; const message = this.view === 'commandes' ? (this.editing ? 'Commande modifiée avec succès' : 'Commande ajoutée avec succès') : 'Enregistrement effectué'; this.snack.open(message, 'OK', { duration: 2500 }); this.cancel(); this.load(); }, error: e => { this.saving = false; this.error(e); } });
+    call.subscribe({ next: () => { this.saving = false; const message = this.view === 'commandes' ? (this.editing ? 'Commande modifiée avec succès' : 'Commande ajoutée avec succès') : 'Enregistrement effectué avec succès'; this.snack.open(message, 'OK', { duration: 2500 }); this.load(); this.cancel(); }, error: (e: any) => { this.saving = false; this.error(e); } });
   }
   private dateTimeValue(value: Date | string | null) {
     if (!value) return null;
@@ -136,14 +136,14 @@ export class AppComponent {
   error(e: any) {
     this.loading = false;
     const message = e?.error?.message || (e?.status === 0
-      ? 'Le backend est injoignable. Vérifiez qu'il est démarré.'
+      ? "Le backend est injoignable. Vérifiez qu'il est démarré."
       : e?.status === 404
-        ? 'La ressource demandée est introuvable (404). Vérifiez la version du backend.'
+        ? "La ressource demandée est introuvable (404). Vérifiez la version du backend."
         : `Erreur du serveur (${e?.status || 'inconnue'}).`);
     this.snack.open(message, 'Fermer', { duration: 5000 });
   }
   get pending() { return this.orders.filter(o => o.statut === 'EN_ATTENTE').length; }
   get total() { return this.orders.length; }
   categoryProductCount(categoryId?: number) { return this.products.filter(p => p.categorie?.id === categoryId).length; }
-  getStatusLabel(status: string) { return ({ EN_ATTENTE: 'En attente', CONFIRMEE: 'Confirmée', EN_PREPARATION: 'En préparation', PRETE: 'Prête', LIVREE: 'Livrée', ANNULEE: 'Annulée' } as any)[status] || status; }
+  getStatusLabel(status: string) { return ({ EN_ATTENTE: 'En attente', CONFIRMEE: 'Confirmée', EN_PREPARATION: 'En préparation', PRETE: 'Prête', LIVREE: 'Livrée', ANNULEE: 'Annulée' } as any)[status]; }
 }
