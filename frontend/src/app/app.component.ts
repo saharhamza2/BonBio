@@ -64,7 +64,7 @@ export class AppComponent {
       return;
     }
     this.orderLines = [];
-    this.form = item ? { ...item, categorieId: item.categorie?.id } : type === 'client' ? { nom: '', telephone: '', adresse: '' } : type === 'categorie' ? { nom: '' } : type === 'produit' ? { nom: '', prix: 0, categorieId: null, description: '' } : {};
+    this.form = item ? { ...item, categorieId: item.categorie?.id } : type === 'client' ? { nom: '', telephone: '', adresse: '' } : type === 'categorie' ? { nom: '' } : type === 'produit' ? { nom: '', prix: '', categorieId: '' } : {};
   }
   cancel() { this.editing = undefined; this.form = {}; this.orderLines = []; this.selectedPhotoName = ''; this.selectedPhoto = null; this.photoPreviewUrl = ''; this.quickClient = false; }
   addOrderLine() { this.orderLines = [...this.orderLines, { quantite: 1 }]; }
@@ -75,7 +75,7 @@ export class AppComponent {
   get orderTotal() { return this.orderLines.reduce((sum, line) => sum + this.lineTotal(line), 0); }
   addQuickClient() {
     if (!this.clientForm.nom?.trim() || !this.clientForm.telephone?.trim()) { this.snack.open('Le nom et le téléphone du client sont obligatoires.', 'Fermer', { duration: 3000 }); return; }
-    this.clientsApi.save(this.clientForm).subscribe({ next: client => { this.clients = [...this.clients, client]; this.form.clientId = client.id; this.quickClient = false; this.clientForm = {}; this.snack.open('Client ajouté et sélectionné.', 'OK', { duration: 2500 }); }, error: e => this.error(e) });
+    this.clientsApi.save(this.clientForm).subscribe({ next: client => { this.clients = [...this.clients, client]; this.form.clientId = client.id; this.quickClient = false; this.clientForm = {}; this.snack.open('Client ajouté avec succès', 'OK', { duration: 2500 }); }, error: e => this.error(e) });
   }
   save() {
     if (this.saving) return;
@@ -92,7 +92,7 @@ export class AppComponent {
     else if (this.view === 'clients') call = this.clientsApi.save(this.form, this.editing);
     if (!call) return;
     this.saving = true;
-    call.subscribe({ next: () => { this.saving = false; const message = this.view === 'commandes' ? (this.editing ? 'Commande modifiée avec succès' : 'Commande ajoutée avec succès') : 'Enregistrement effectué'; this.snack.open(message, 'OK', { duration: 2500 }); this.cancel(); this.load(); }, error: (e: any) => { this.saving = false; this.error(e); } });
+    call.subscribe({ next: () => { this.saving = false; const message = this.view === 'commandes' ? (this.editing ? 'Commande modifiée avec succès' : 'Commande ajoutée avec succès') : 'Enregistrement effectué'; this.snack.open(message, 'OK', { duration: 2500 }); this.cancel(); this.load(); }, error: e => { this.saving = false; this.error(e); } });
   }
   private dateTimeValue(value: Date | string | null) {
     if (!value) return null;
@@ -102,7 +102,7 @@ export class AppComponent {
   }
   remove(type: string, id?: number) {
     if (id === undefined) return;
-    if (type === 'categories' && this.products.some(p => p.categorie?.id === id)) { this.snack.open('Cette catégorie contient encore des produits. Veuillez déplacer ou supprimer ces produits avant de supprimer la catégorie.', 'Fermer', { duration: 5000 }); return; }
+    if (type === 'categories' && this.products.some(p => p.categorie?.id === id)) { this.snack.open('Cette catégorie contient encore des produits. Veuillez déplacer ou supprimer ces produits avant de la supprimer.', 'Fermer', { duration: 4000 }); return; }
     if (!window.confirm('Confirmer la suppression ?')) return;
     const call = type === 'categories' ? this.categoriesApi.delete(id) : type === 'produits' ? this.productsApi.delete(id) : type === 'commandes' ? this.ordersApi.delete(id) : this.clientsApi.delete(id);
     call.subscribe({ next: () => { this.snack.open('Suppression effectuée', 'OK', { duration: 2500 }); this.load(); }, error: (e: any) => this.error(e) });
@@ -132,11 +132,11 @@ export class AppComponent {
     if (file.size > 5 * 1024 * 1024) { this.snack.open('Image trop volumineuse (5 Mo maximum).', 'Fermer', { duration: 3500 }); input.value = ''; return; }
     this.selectedPhoto = file; this.selectedPhotoName = file.name; this.photoPreviewUrl = URL.createObjectURL(file);
   }
-  imageUrl(path?: string) { return path?.startsWith('http') ? path : path ? `https://bonbio-production.up.railway.app${path}` : ''; }
+  imageUrl(path?: string) { return path?.startsWith('http') ? path : path ? `/api${path}` : ''; }
   error(e: any) {
     this.loading = false;
     const message = e?.error?.message || (e?.status === 0
-      ? 'Le backend est injoignable. Vérifiez qu’il est démarré.'
+      ? 'Le backend est injoignable. Vérifiez qu'il est démarré.'
       : e?.status === 404
         ? 'La ressource demandée est introuvable (404). Vérifiez la version du backend.'
         : `Erreur du serveur (${e?.status || 'inconnue'}).`);

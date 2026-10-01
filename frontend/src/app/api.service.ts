@@ -8,24 +8,24 @@ export interface Product { id?: number; nom: string; prix: number; photoUrl?: st
 export interface OrderLine { produitId: number; produitNom: string; quantite: number; prixUnitaire: number; }
 export interface Order { id?: number; client: Client; dateCommande: string; dateLivraison?: string; statut: string; montantTotal: number; lignes: OrderLine[]; }
 
-const API = 'https://bonbio-production.up.railway.app';
+const API = '/api';
 
 @Injectable({ providedIn: 'root' })
 export class ClientService {
   private http = inject(HttpClient);
 
   list() {
-    return this.http.get<Client[]>(`${API}/api/clients`);
+    return this.http.get<Client[]>(`${API}/clients`);
   }
 
   save(value: unknown, id?: number) {
     return id
-      ? this.http.put<Client>(`${API}/api/clients/${id}`, value)
-      : this.http.post<Client>(`${API}/api/clients`, value);
+      ? this.http.put<Client>(`${API}/clients/${id}`, value)
+      : this.http.post<Client>(`${API}/clients`, value);
   }
 
   delete(id: number) {
-    return this.http.delete(`${API}/api/clients/${id}`);
+    return this.http.delete(`${API}/clients/${id}`);
   }
 }
 
@@ -34,21 +34,21 @@ export class CategorieService {
   private http = inject(HttpClient);
 
   list() {
-    return this.http.get<Category[]>(`${API}/api/categories`);
+    return this.http.get<Category[]>(`${API}/categories`);
   }
 
   products(id: number) {
-    return this.http.get<Product[]>(`${API}/api/categories/${id}/produits`);
+    return this.http.get<Product[]>(`${API}/categories/${id}/produits`);
   }
 
   save(value: unknown, id?: number) {
     return id
-      ? this.http.put<Category>(`${API}/api/categories/${id}`, value)
-      : this.http.post<Category>(`${API}/api/categories`, value);
+      ? this.http.put<Category>(`${API}/categories/${id}`, value)
+      : this.http.post<Category>(`${API}/categories`, value);
   }
 
   delete(id: number) {
-    return this.http.delete(`${API}/api/categories/${id}`);
+    return this.http.delete(`${API}/categories/${id}`);
   }
 }
 
@@ -57,7 +57,7 @@ export class ProduitService {
   private http = inject(HttpClient);
 
   list() {
-    return this.http.get<Product[]>(`${API}/api/produits`);
+    return this.http.get<Product[]>(`${API}/produits`);
   }
 
   save(value: unknown, id?: number, image?: File | null) {
@@ -73,12 +73,12 @@ export class ProduitService {
     }
 
     return id
-      ? this.http.put<Product>(`${API}/api/produits/${id}`, data)
-      : this.http.post<Product>(`${API}/api/produits`, data);
+      ? this.http.put<Product>(`${API}/produits/${id}`, data)
+      : this.http.post<Product>(`${API}/produits`, data);
   }
 
   delete(id: number) {
-    return this.http.delete(`${API}/api/produits/${id}`);
+    return this.http.delete(`${API}/produits/${id}`);
   }
 }
 
@@ -87,17 +87,17 @@ export class CommandeService {
   private http = inject(HttpClient);
 
   list() {
-    return this.http.get<Order[]>(`${API}/api/commandes`);
+    return this.http.get<Order[]>(`${API}/commandes`);
   }
 
   save(value: unknown, id?: number) {
     return id
-      ? this.http.put<Order>(`${API}/api/commandes/${id}`, value)
-      : this.http.post<Order>(`${API}/api/commandes`, value);
+      ? this.http.put<Order>(`${API}/commandes/${id}`, value)
+      : this.http.post<Order>(`${API}/commandes`, value);
   }
 
   delete(id: number) {
-    return this.http.delete(`${API}/api/commandes/${id}`);
+    return this.http.delete(`${API}/commandes/${id}`);
   }
 }
 
@@ -107,20 +107,20 @@ export class RecetteService {
 
   get(productId: number) {
     return this.http.get<{ contenu: string }>(
-      `${API}/api/produits/${productId}/recette`
+      `${API}/produits/${productId}/recette`
     );
   }
 
   save(productId: number, contenu: string) {
     return this.http.post(
-      `${API}/api/produits/${productId}/recette`,
+      `${API}/produits/${productId}/recette`,
       { contenu }
     );
   }
 
   update(productId: number, contenu: string) {
     return this.http.put(
-      `${API}/api/produits/${productId}/recette`,
+      `${API}/produits/${productId}/recette`,
       { contenu }
     );
   }
