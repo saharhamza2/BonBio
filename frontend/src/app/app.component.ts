@@ -132,7 +132,7 @@ export class AppComponent {
     if (file.size > 5 * 1024 * 1024) { this.snack.open('Image trop volumineuse (5 Mo maximum).', 'Fermer', { duration: 3500 }); input.value = ''; return; }
     this.selectedPhoto = file; this.selectedPhotoName = file.name; this.photoPreviewUrl = URL.createObjectURL(file);
   }
-  imageUrl(path?: string) { return path?.startsWith('http') ? path : path ? `/api${path}` : ''; }
+  imageUrl(path?: string) { return path?.startsWith('http') ? path : path || ''; }
   error(e: any) {
     this.loading = false;
     const message = e?.error?.message || (e?.status === 0
@@ -145,5 +145,5 @@ export class AppComponent {
   get pending() { return this.orders.filter(o => o.statut === 'EN_ATTENTE').length; }
   get total() { return this.orders.length; }
   categoryProductCount(categoryId?: number) { return this.products.filter(p => p.categorie?.id === categoryId).length; }
-  getStatusLabel(status: string) { return ({ EN_ATTENTE: 'En attente', CONFIRMEE: 'Confirmée', EN_PREPARATION: 'En préparation', PRETE: 'Prête', LIVREE: 'Livrée', ANNULEE: 'Annulée' } as any)[status] || status; }
+  getStatusLabel(status: string) { return ({ EN_ATTENTE: 'En attente', CONFIRMEE: 'Confirmée', EN_PREPARATION: 'En préparation', PRETE: 'Prête', LIVREE: 'Livrée', ANNULEA: 'Annulée' } as any)[status] || status; }
 }
