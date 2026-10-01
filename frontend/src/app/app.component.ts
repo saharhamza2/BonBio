@@ -145,5 +145,5 @@ export class AppComponent {
   get pending() { return this.orders.filter(o => o.statut === 'EN_ATTENTE').length; }
   get total() { return this.orders.length; }
   categoryProductCount(categoryId?: number) { return this.products.filter(p => p.categorie?.id === categoryId).length; }
-  getStatusLabel(status: string) { return ({ EN_ATTENTE: 'En attente', CONFIRMEE: 'Confirmée', EN_PREPARATION: 'En préparation', PRETE: 'Prête', LIVREE: 'Livrée', ANNULEA: 'Annulée' } as any)[status] || status; }
+  getStatusLabel(status: string) { return ({ EN_ATTENTE: 'En attente', CONFIRMEE: 'Confirmée', EN_PREPARATION: 'En préparation', PRETE: 'Prête', LIVREE: 'Livrée', ANNULEE: 'Annulée' } as any)[status] || status; }
 }
