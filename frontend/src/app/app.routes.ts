@@ -1,9 +1,12 @@
 import { Routes } from '@angular/router';
-import { AppComponent } from './app.component';
+import { CategoriesPageComponent, ClientsPageComponent, DashboardPageComponent, OrdersPageComponent, ProductsPageComponent } from './section-pages.component';
 
 export const routes: Routes = [
-	{ path: '', component: AppComponent }, { path: 'clients', component: AppComponent },
-	{ path: 'produits', component: AppComponent }, { path: 'categories', component: AppComponent },
-	{ path: 'commandes', component: AppComponent },
-	{ path: '**', redirectTo: '' }
+  { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
+  { path: 'dashboard', component: DashboardPageComponent },
+  { path: 'clients', component: ClientsPageComponent },
+  { path: 'produits', component: ProductsPageComponent },
+  { path: 'categories', component: CategoriesPageComponent },
+  { path: 'commandes', component: OrdersPageComponent },
+  { path: '**', redirectTo: 'dashboard' }
 ];

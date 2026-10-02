@@ -9,6 +9,10 @@ import java.util.Map;
 
 @RestControllerAdvice
 public class ApiExceptionHandler {
+    @ExceptionHandler(com.bonbio.service.ProductImageService.StorageUploadException.class)
+    ResponseEntity<Map<String,String>> handleStorageUpload(com.bonbio.service.ProductImageService.StorageUploadException ex) { return ResponseEntity.status(HttpStatus.BAD_GATEWAY).body(Map.of("message", ex.getMessage())); }
+    @ExceptionHandler(com.bonbio.service.ProductImageService.ImageReadException.class)
+    ResponseEntity<Map<String,String>> handleImageRead(com.bonbio.service.ProductImageService.ImageReadException ex) { return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("message", ex.getMessage())); }
     @ExceptionHandler(RuntimeException.class)
     ResponseEntity<Map<String,String>> handleRuntime(RuntimeException ex) { return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", ex.getMessage())); }
     @ExceptionHandler(IllegalStateException.class)

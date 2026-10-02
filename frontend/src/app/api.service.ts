@@ -2,11 +2,11 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
-export interface Client { id?: number; nom: string; telephone: string; adresse?: string; }
+export interface Client { id?: number; nom: string; telephone: string; adresse?: string | null; }
 export interface Category { id?: number; nom: string; }
-export interface Product { id?: number; nom: string; prix: number; photoUrl?: string; description?: string; categorie: Category; }
+export interface Product { id?: number; nom: string; prix: number; photoUrl?: string | null; description?: string | null; categorie: Category; }
 export interface OrderLine { produitId: number; produitNom: string; quantite: number; prixUnitaire: number; }
-export interface Order { id?: number; client: Client; dateCommande: string; dateLivraison?: string; statut: string; montantTotal: number; lignes: OrderLine[]; }
+export interface Order { id?: number; client: Client; dateCommande: string; dateLivraison?: string | null; statut: string; montantTotal: number; lignes: OrderLine[]; }
 
 const API = '/api';
 
